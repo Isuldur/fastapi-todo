@@ -3,6 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models import Todo
+from app.schemas import TodoCreate
+from app.schemas import TodoUpdate
 
 
 router = APIRouter()
@@ -19,16 +21,15 @@ def get_db():
 
 @router.post("/todos")
 def create_todo(
-    title: str,
-    description: str = "",
+    todo: TodoCreate,
     db: Session = Depends(get_db)
 ):
     """Create a new todo item."""
-    todo = Todo(title=title, description=description)
-    db.add(todo)
+    new_todo = Todo(**todo.dict())
+    db.add(new_todo)
     db.commit()
-    db.refresh(todo)
-    return todo
+    db.refresh(new_todo)
+    return new_todo
 
 
 @router.get("/todos")
@@ -49,18 +50,18 @@ def get_todo(todo_id: int, db: Session = Depends(get_db)):
 @router.put("/todos/{todo_id}")
 def update_todo(
     todo_id: int,
-    title: str,
-    description: str,
-    completed: bool,
+    updated_data: TodoUpdate,
     db: Session = Depends(get_db),
 ):
     """Update a specific todo item."""
     todo = db.query(Todo).filter(Todo.id == todo_id).first()
     if not todo:
         raise HTTPException(status_code=404, detail="Tarea no encontrada")
-    todo.title = title
-    todo.description = description
-    todo.completed = completed
+
+    todo.title = updated_data.title
+    todo.description = updated_data.description or ""
+    todo.completed = updated_data.completed
+
     db.commit()
     db.refresh(todo)
     return todo
