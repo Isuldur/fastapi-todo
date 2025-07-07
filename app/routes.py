@@ -1,13 +1,13 @@
 """Routes for the todo app."""
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from database import SessionLocal
-from models import Todo
+from app.database import SessionLocal
+from app.models import Todo
+
 
 router = APIRouter()
 
 
-# Dependency: abrir y cerrar la sesión con la base de datos
 def get_db():
     """Get database session dependency."""
     db = SessionLocal()
@@ -17,7 +17,6 @@ def get_db():
         db.close()
 
 
-# Crear una tarea
 @router.post("/todos")
 def create_todo(
     title: str,
@@ -32,14 +31,12 @@ def create_todo(
     return todo
 
 
-# Listar todas las tareas
 @router.get("/todos")
 def get_all_todos(db: Session = Depends(get_db)):
     """Get all todo items."""
     return db.query(Todo).all()
 
 
-# Obtener una tarea por ID
 @router.get("/todos/{todo_id}")
 def get_todo(todo_id: int, db: Session = Depends(get_db)):
     """Get a specific todo item by ID."""
@@ -49,7 +46,6 @@ def get_todo(todo_id: int, db: Session = Depends(get_db)):
     return todo
 
 
-# Actualizar una tarea
 @router.put("/todos/{todo_id}")
 def update_todo(
     todo_id: int,
@@ -70,7 +66,6 @@ def update_todo(
     return todo
 
 
-# Eliminar una tarea
 @router.delete("/todos/{todo_id}")
 def delete_todo(todo_id: int, db: Session = Depends(get_db)):
     """Delete a specific todo item."""
