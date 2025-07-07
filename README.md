@@ -30,11 +30,11 @@ Una API RESTful desarrollada con [FastAPI](https://fastapi.tiangolo.com/) para g
 ## 📦 Instalación
 
 1. **Clona el repositorio**
-2. 
+
 git clone https://github.com/tu_usuario/fastapi-todo.git
 cd fastapi-todo
 
-2. **Crea y activa el entorno virtual**
+3. **Crea y activa el entorno virtual**
 
 python -m venv venv
 venv\Scripts\activate  # En Windows
